@@ -8,26 +8,6 @@ class Board
     reset
   end
 
-  # rubocop:disable Metrics/AbcSize
-  def draw
-    puts "     |     |"
-    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
-    puts "     |     |"
-    puts "-----|-----|-----"
-    puts "     |     |"
-    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
-    puts "     |     |"
-    puts "-----|-----|-----"
-    puts "     |     |"
-    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
-    puts "     |     |"
-  end
-  # rubocop:enable Metrics/AbcSize
-
-  def get_square_at(key)
-    @squares[key]
-  end
-
   def []=(num, marker)
     @squares[num].marker = marker
   end
@@ -44,7 +24,6 @@ class Board
     !!winning_marker
   end
 
-  # returns winning marker or nil
   def winning_marker
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
@@ -58,6 +37,22 @@ class Board
   def reset
     (1..9).each { |key| @squares[key] = Square.new }
   end
+
+  # rubocop:disable Metrics/AbcSize
+  def draw
+    puts "     |     |"
+    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
+    puts "     |     |"
+    puts "-----|-----|-----"
+    puts "     |     |"
+    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
+    puts "     |     |"
+    puts "-----|-----|-----"
+    puts "     |     |"
+    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
+    puts "     |     |"
+  end
+  # rubocop:enable Metrics/AbcSize
 
   private
 
@@ -81,12 +76,12 @@ class Square
     @marker
   end
 
-  def marked?
-    marker != INITIAL_MARKER
-  end
-
   def unmarked?
     marker == INITIAL_MARKER
+  end
+
+  def marked?
+    marker != INITIAL_MARKER
   end
 end
 
@@ -124,6 +119,7 @@ class TTTGame
         break if board.someone_won? || board.full?
         clear_screen_and_display_board
       end
+
       display_result
       break unless play_again?
       reset
@@ -144,6 +140,11 @@ class TTTGame
     puts "Thanks for playing Tic Tac Toe! Goodbye!"
   end
 
+  def clear_screen_and_display_board
+    clear
+    display_board
+  end
+
   def display_board
     puts "You're a #{human.marker}. Computer is a #{computer.marker}."
     puts ""
@@ -151,23 +152,13 @@ class TTTGame
     puts ""
   end
 
-  def clear_screen_and_display_board
-    clear
-    display_board
-  end
-
-  def current_player_moves
-    if @current_marker == HUMAN_MARKER
-      human_moves
-      @current_marker = COMPUTER_MARKER
-    else
-      computer_moves
-      @current_marker = HUMAN_MARKER
-    end
+  def joinor(arr, delimiter=', ', word='or')
+    arr[-1] = "#{word} #{arr.last}" if arr.size > 1
+    arr.join(delimiter)
   end
 
   def human_moves
-    puts "Choose a square (#{board.unmarked_keys.join(', ')}):"
+    puts "Choose a square (#{joinor(board.unmarked_keys)}):"
     square = nil
     loop do
       square = gets.chomp.to_i
@@ -182,8 +173,18 @@ class TTTGame
     board[board.unmarked_keys.sample] = computer.marker
   end
 
+  def current_player_moves
+    if @current_marker == HUMAN_MARKER
+      human_moves
+      @current_marker = COMPUTER_MARKER
+    else
+      computer_moves
+      @current_marker = HUMAN_MARKER
+    end
+  end
+
   def display_result
-    display_board
+    clear_screen_and_display_board
 
     case board.winning_marker
     when human.marker
@@ -193,10 +194,6 @@ class TTTGame
     else
       puts "It's a tie!"
     end
-  end
-
-  def clear
-    system 'clear'
   end
 
   def play_again?
@@ -209,6 +206,10 @@ class TTTGame
     end
 
     answer == 'y'
+  end
+
+  def clear
+    system 'clear'
   end
 
   def reset
