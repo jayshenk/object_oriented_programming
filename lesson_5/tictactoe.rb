@@ -86,10 +86,12 @@ class Square
 end
 
 class Player
+  attr_accessor :score
   attr_reader :marker
 
   def initialize(marker)
     @marker = marker
+    @score = 0
   end
 end
 
@@ -121,6 +123,12 @@ class TTTGame
       end
 
       display_result
+      score_result
+      display_score
+      if overall_winner?
+        display_overall_winner
+        break
+      end
       break unless play_again?
       reset
       display_play_again_message
@@ -194,6 +202,33 @@ class TTTGame
     else
       puts "It's a tie!"
     end
+  end
+
+  def display_overall_winner
+    if human.score == 5
+      puts "You are the overall winner!"
+    else
+      puts "The computer is the overall winner!"
+    end
+  end
+
+  def score_result
+    if board.winning_marker == HUMAN_MARKER
+      human.score += 1
+    elsif board.winning_marker == COMPUTER_MARKER
+      computer.score += 1
+    end        
+  end
+
+  def display_score
+    puts "-----------------"
+    puts "Player wins: #{human.score}"
+    puts "Computer wins: #{computer.score}"
+    puts "-----------------"
+  end
+
+  def overall_winner?
+    human.score == 5 || computer.score == 5
   end
 
   def play_again?
