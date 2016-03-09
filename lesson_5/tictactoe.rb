@@ -8,6 +8,7 @@ class Board
     reset
   end
 
+  # rubocop:disable Metrics/AbcSize
   def draw
     puts "     |     |"
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
@@ -21,6 +22,7 @@ class Board
     puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
     puts "     |     |"
   end
+  # rubocop:enable Metrics/AbcSize
 
   def get_square_at(key)
     @squares[key]
@@ -113,7 +115,7 @@ class TTTGame
   def play
     clear
     display_welcome_message
-    
+
     loop do
       display_board
 
@@ -219,8 +221,6 @@ class TTTGame
     puts "Let's play again!"
     puts ""
   end
-
-
 end
 
 game = TTTGame.new
