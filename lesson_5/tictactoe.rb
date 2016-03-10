@@ -43,7 +43,7 @@ class Board
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
       marked_squares = squares.select { |square| square.marker == marker }
-      unmarked_squares = squares.select { |square| square.unmarked? }
+      unmarked_squares = squares.select(&:unmarked?)
       if marked_squares.count == 2 && unmarked_squares.count == 1
         return @squares.select { |num, square| line.include?(num) && square.unmarked? }.keys.first
       end
@@ -288,7 +288,7 @@ class TTTGame
       human.score += 1
     elsif board.winning_marker == computer.marker
       computer.score += 1
-    end        
+    end
   end
 
   def display_score
