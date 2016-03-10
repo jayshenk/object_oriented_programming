@@ -103,27 +103,59 @@ class Square
 end
 
 class Player
-  attr_accessor :score
+  attr_accessor :score, :name
   attr_reader :marker
 
   def initialize(marker)
     @marker = marker
     @score = 0
+    set_name
+  end
+end
+
+class Human < Player
+  def set_name
+    answer = nil
+    loop do
+      puts "What's your name?"
+      answer = gets.chomp
+      break unless answer.empty?
+    end
+    self.name = answer
+  end
+end
+
+class Computer < Player
+  def set_name
+    self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
   end
 end
 
 class TTTGame
-  HUMAN_MARKER = "X"
-  COMPUTER_MARKER = "O"
-  FIRST_TO_MOVE = HUMAN_MARKER
+  FIRST_TO_MOVE = 'X'
 
   attr_reader :board, :human, :computer
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
+    @human = Human.new(choose_marker)
+    @computer = Computer.new(computer_choose_marker)
     @current_marker = FIRST_TO_MOVE
+  end
+
+  def choose_marker
+    answer = nil
+    loop do
+      puts "Do you want to play as X or O?"
+      answer = gets.chomp
+      break if ['X', 'O'].include? answer
+      puts "That is not a valid marker."
+    end
+    answer
+  end
+
+  def computer_choose_marker
+    human.marker == 'X' ? 'O' : 'X'
   end
 
   def play
@@ -171,7 +203,7 @@ class TTTGame
   end
 
   def display_board
-    puts "You're a #{human.marker}. Computer is a #{computer.marker}."
+    puts "#{human.name} is a #{human.marker}. #{computer.name} is a #{computer.marker}."
     puts ""
     board.draw
     puts ""
@@ -221,12 +253,12 @@ class TTTGame
   end
 
   def current_player_moves
-    if @current_marker == HUMAN_MARKER
+    if @current_marker == human.marker
       human_moves
-      @current_marker = COMPUTER_MARKER
+      @current_marker = computer.marker
     else
       computer_moves
-      @current_marker = HUMAN_MARKER
+      @current_marker = human.marker
     end
   end
 
@@ -252,9 +284,9 @@ class TTTGame
   end
 
   def score_result
-    if board.winning_marker == HUMAN_MARKER
+    if board.winning_marker == human.marker
       human.score += 1
-    elsif board.winning_marker == COMPUTER_MARKER
+    elsif board.winning_marker == computer.marker
       computer.score += 1
     end        
   end
