@@ -1,3 +1,4 @@
+require 'pry'
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # cols
@@ -6,6 +7,10 @@ class Board
   def initialize
     @squares = {}
     reset
+  end
+
+  def [](num)
+    @squares[num]
   end
 
   def []=(num, marker)
@@ -29,6 +34,18 @@ class Board
       squares = @squares.values_at(*line)
       if three_identical_markers?(squares)
         return squares.first.marker
+      end
+    end
+    nil
+  end
+
+  def find_at_risk_square(marker)
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      marked_squares = squares.select { |square| square.marker == marker }
+      unmarked_squares = squares.select { |square| square.unmarked? }
+      if marked_squares.count == 2 && unmarked_squares.count == 1
+        return @squares.select { |num, square| line.include?(num) && square.unmarked? }.keys.first
       end
     end
     nil
@@ -178,7 +195,29 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker
+    key = nil
+
+    # offense first
+    key = board.find_at_risk_square(computer.marker)
+
+    # defense
+    if !key
+      key = board.find_at_risk_square(human.marker)
+    end
+
+    # pick key 5
+    if !key
+      if board[5].unmarked?
+        key = 5
+      end
+    end
+
+    # just pick a key
+    if !key
+      key = board.unmarked_keys.sample
+    end
+
+    board[key] = computer.marker
   end
 
   def current_player_moves
