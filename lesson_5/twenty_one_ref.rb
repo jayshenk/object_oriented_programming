@@ -196,8 +196,7 @@ class TwentyOne
       if answer == 's'
         puts "#{player.name} stays!"
         break
-      elsif
-        player.busted?
+      elsif player.busted?
         break
       else
         # show update only for hit
@@ -232,7 +231,7 @@ class TwentyOne
       puts "It looks like #{dealer.name} busted! #{player.name} wins!"
     end
   end
-     
+
   def show_cards
     player.show_hand
     dealer.show_hand
@@ -259,7 +258,7 @@ class TwentyOne
 
     answer == 'y'
   end
-  
+
   def start
     loop do
       system 'clear'
