@@ -18,7 +18,7 @@ module Hand
   end
 
   def total
-    values = hand.map(&:value)
+    values = hand.map(&:face)
 
     sum = 0
     values.each do |value|
@@ -72,15 +72,15 @@ end
 
 class Deck
   SUITS = ['H', 'D', 'C', 'S']
-  VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+  FACES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
   attr_reader :cards
 
   def initialize
     @cards = []
     SUITS.each do |suit|
-      VALUES.each do |value|
-        @cards << Card.new(suit, value)
+      FACES.each do |face|
+        @cards << Card.new(suit, face)
       end
     end
     @cards.shuffle!
@@ -92,15 +92,15 @@ class Deck
 end
 
 class Card
-  attr_reader :suit, :value
+  attr_reader :suit, :face
 
-  def initialize(suit, value)
+  def initialize(suit, face)
     @suit = suit
-    @value = value
+    @face = face
   end
 
   def to_s
-    "[#{suit}, #{value}]"
+    "[#{suit}, #{face}]"
   end
 end
 
